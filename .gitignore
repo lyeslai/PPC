@@ -1,0 +1,11 @@
+# Ignorer le dossier Metals (utilisé par Scala Metals)
+.metals/
+
+# Ignorer les fichiers et dossiers spécifiques à VS Code
+.vscode/
+
+# Optionnel : Ignorer les fichiers temporaires de l’éditeur et système
+*.swp
+*.swo
+.DS_Store
+Thumbs
