@@ -32,6 +32,19 @@ class BachActor extends Actor {
 def receive = {
     case "START" => {
       println("start")
+      println(exemple)
+      println("Duration de l'exemple : " +  duration(exemple))
+      val copied = copy(exemple)
+      println("Objet copié : " + copied)
+      val notesCount = note_count(exemple)
+      println("Nombre de notes dans l'exemple : " + notesCount)
+      val stretched = stretch(exemple, 1.5)
+      println("Durée après étirement : " + duration(stretched))
+      println("Lecture de l'exemple étiré :")
+      println(stretched)
+      println("Lecture de l'exemple 2 :")
+      play(exemple2)
+
     }
         
 }
@@ -41,8 +54,12 @@ def receive = {
 //Question 1
 // val exemple = ???
 
-val exemple = Nil
-
+val exemple = Parallel(List
+(Sequential(List
+(Note(60,1000,80),Note(64,500,80),Note(62,500,80),Rest(1000),Note(67,1000,80))
+),
+Sequential(List
+(Note(52,2000,80),Note(55,1000,80),Note(55,1000,80)))))
 
 //Question 2
  
@@ -75,7 +92,7 @@ val exemple = Nil
     case Parallel (l) => l.foreach(n=>play_midi(n,at))
   }
   
-/*
+
  // Copy un objet musical
   def copy (obj:ObjectMusical):ObjectMusical =
   obj match {
@@ -135,18 +152,53 @@ obj match {
 
 
 // make a sequential avec n fois obj  
-  def repeat (obj:ObjectMusical, n:Int):ObjectMusical =
-  //code here
+def repeat (obj:ObjectMusical, n:Int):ObjectMusical ={
+    if (n <= 1) obj  
+    else {
+      Sequential(List.fill(n)(obj)  )
+    }
+
+  }
 
 // make obj en parallele avec lui meme avec un decalage de n ms.
-  def canon (obj:ObjectMusical, n:Int):ObjectMusical =
-  //code here
+  def canon (obj:ObjectMusical, n:Int):ObjectMusical ={
+    if(n<=0) obj
+    else {
+      Parallel(
+        List(
+          obj,
+          Sequential(List(Rest(n), obj))
+        )
+      ) 
+    }
+  }
 
 
 //  Met obj1 et obj2 en seqeunce 
   def concat (obj1:ObjectMusical, obj2:ObjectMusical):ObjectMusical =
-  //code here
-*/
+    Sequential(List(obj1,obj2))
+
+
+    val exemple2 = Parallel(
+    List(
+      canon(repeat(Sequential(
+    List(
+      Note(60, 1000, 100),
+      Note(64, 500, 100),
+      Note(62, 500, 100),
+      Rest(1000),
+      Note(67, 1000, 100)
+    )
+  ), 3), 1000),
+      canon(repeat(Sequential(
+    List(
+      Note(52, 2000, 100),
+      Note(55, 1000, 100),
+      Note(55, 1000, 100)
+    )
+  ), 3), 1000)
+    )
+  )
 
 //Question 5 BACH
  val voix1 = Sequential ( List (
@@ -187,11 +239,6 @@ val voix2 = Sequential (List (
   Note (52 , 125 , 100 ),Note (53 , 125 , 100 ),Note (55 , 125 , 100 ),
   Note (58 , 125 , 100 ),Note (57 , 125 , 100 ),Note (55 , 125 , 100 )))
 
-/*
-def canon_Bach ():ObjectMusical = {
-    // ????
-  }
-*/
 }
 //////////////////////////////////////////////////
 
@@ -202,4 +249,3 @@ object bach extends App {
   val localActor = system.actorOf(Props[BachActor], name = "Bach")
   localActor ! "START"
 }
-
