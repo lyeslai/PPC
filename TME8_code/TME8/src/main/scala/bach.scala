@@ -43,7 +43,10 @@ def receive = {
       println("Lecture de l'exemple étiré :")
       println(stretched)
       println("Lecture de l'exemple 2 :")
-      play(exemple2)
+      println(exemple2)
+      println("Canon bach :")
+      play(canon_Bach())
+
 
     }
         
@@ -54,12 +57,21 @@ def receive = {
 //Question 1
 // val exemple = ???
 
-val exemple = Parallel(List
-(Sequential(List
-(Note(60,1000,80),Note(64,500,80),Note(62,500,80),Rest(1000),Note(67,1000,80))
-),
+val exemple = Parallel(
+  List(
+    Sequential(List
+  (Note(60,1000,80),
+  Note(64,500,80),
+  Note(62,500,80),
+  Rest(1000),
+  Note(67,1000,80))
+  ),
 Sequential(List
-(Note(52,2000,80),Note(55,1000,80),Note(55,1000,80)))))
+(Note(52,2000,80),
+Note(55,1000,80),
+Note(55,1000,80))
+)
+))
 
 //Question 2
  
@@ -238,7 +250,21 @@ val voix2 = Sequential (List (
   Note (50 , 125 , 100 ),Note (49 , 125 , 100 ),Note (50 , 125 , 100 ), 
   Note (52 , 125 , 100 ),Note (53 , 125 , 100 ),Note (55 , 125 , 100 ),
   Note (58 , 125 , 100 ),Note (57 , 125 , 100 ),Note (55 , 125 , 100 )))
+  def canon_Bach(): ObjectMusical = {
 
+    val voix1Repeated = repeat(voix1, 6)
+    val voix1Transposed = (0 until 6).foldLeft(voix1Repeated)((acc, i) => transpose(acc, 2))
+
+    val voix2Repeated = repeat(voix2, 6)
+    val voix2Transposed = (0 until 6).foldLeft(voix2Repeated)((acc, i) => transpose(acc, 2))
+
+    val voix3 = transpose(voix2, 7)
+    val voix3Repeated = repeat(voix3, 6)
+    val voix3Transposed = (0 until 6).foldLeft(voix3Repeated)((acc, i) => transpose(acc, 2))
+    val voix3Delayed = Sequential(List(Rest(2000), voix3Transposed))
+
+    Parallel(List(voix1Transposed, voix2Transposed, voix3Delayed))
+  }
 }
 //////////////////////////////////////////////////
 
