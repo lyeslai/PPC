@@ -1,0 +1,19 @@
+[0m[[0m[0mdebug[0m] [0m[0mPackaging C:\Users\Lyes\Desktop\m2\ppc\Projets\scalaHelloWorld\target\scala-2.11\hello_2.11-1.0.jar ...[0m
+[0m[[0m[0mdebug[0m] [0m[0mInput file mappings:[0m
+[0m[[0m[0mdebug[0m] [0m[0m	.DS_Store[0m
+[0m[[0m[0mdebug[0m] [0m[0m	  C:\Users\Lyes\Desktop\m2\ppc\Projets\scalaHelloWorld\target\scala-2.11\classes\.DS_Store[0m
+[0m[[0m[0mdebug[0m] [0m[0m	application.conf[0m
+[0m[[0m[0mdebug[0m] [0m[0m	  C:\Users\Lyes\Desktop\m2\ppc\Projets\scalaHelloWorld\target\scala-2.11\classes\application.conf[0m
+[0m[[0m[0mdebug[0m] [0m[0m	upmc[0m
+[0m[[0m[0mdebug[0m] [0m[0m	  C:\Users\Lyes\Desktop\m2\ppc\Projets\scalaHelloWorld\target\scala-2.11\classes\upmc[0m
+[0m[[0m[0mdebug[0m] [0m[0m	upmc\akka[0m
+[0m[[0m[0mdebug[0m] [0m[0m	  C:\Users\Lyes\Desktop\m2\ppc\Projets\scalaHelloWorld\target\scala-2.11\classes\upmc\akka[0m
+[0m[[0m[0mdebug[0m] [0m[0m	upmc\akka\culto[0m
+[0m[[0m[0mdebug[0m] [0m[0m	  C:\Users\Lyes\Desktop\m2\ppc\Projets\scalaHelloWorld\target\scala-2.11\classes\upmc\akka\culto[0m
+[0m[[0m[0mdebug[0m] [0m[0m	upmc\akka\culto\hello$.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	  C:\Users\Lyes\Desktop\m2\ppc\Projets\scalaHelloWorld\target\scala-2.11\classes\upmc\akka\culto\hello$.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	upmc\akka\culto\hello$delayedInit$body.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	  C:\Users\Lyes\Desktop\m2\ppc\Projets\scalaHelloWorld\target\scala-2.11\classes\upmc\akka\culto\hello$delayedInit$body.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	upmc\akka\culto\hello.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	  C:\Users\Lyes\Desktop\m2\ppc\Projets\scalaHelloWorld\target\scala-2.11\classes\upmc\akka\culto\hello.class[0m
+[0m[[0m[0mdebug[0m] [0m[0mDone packaging.[0m

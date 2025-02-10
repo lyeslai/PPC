@@ -1,0 +1,35 @@
+[0m[[0m[0mdebug[0m] [0m[0mPackaging C:\Users\Lyes\Desktop\m2\ppc\Projets\TME8_code\PLAYER\target\scala-2.11\player_2.11-1.0.jar ...[0m
+[0m[[0m[0mdebug[0m] [0m[0mInput file mappings:[0m
+[0m[[0m[0mdebug[0m] [0m[0m	.DS_Store[0m
+[0m[[0m[0mdebug[0m] [0m[0m	  C:\Users\Lyes\Desktop\m2\ppc\Projets\TME8_code\PLAYER\target\scala-2.11\classes\.DS_Store[0m
+[0m[[0m[0mdebug[0m] [0m[0m	application.conf[0m
+[0m[[0m[0mdebug[0m] [0m[0m	  C:\Users\Lyes\Desktop\m2\ppc\Projets\TME8_code\PLAYER\target\scala-2.11\classes\application.conf[0m
+[0m[[0m[0mdebug[0m] [0m[0m	upmc[0m
+[0m[[0m[0mdebug[0m] [0m[0m	  C:\Users\Lyes\Desktop\m2\ppc\Projets\TME8_code\PLAYER\target\scala-2.11\classes\upmc[0m
+[0m[[0m[0mdebug[0m] [0m[0m	upmc\akka[0m
+[0m[[0m[0mdebug[0m] [0m[0m	  C:\Users\Lyes\Desktop\m2\ppc\Projets\TME8_code\PLAYER\target\scala-2.11\classes\upmc\akka[0m
+[0m[[0m[0mdebug[0m] [0m[0m	upmc\akka\culto[0m
+[0m[[0m[0mdebug[0m] [0m[0m	  C:\Users\Lyes\Desktop\m2\ppc\Projets\TME8_code\PLAYER\target\scala-2.11\classes\upmc\akka\culto[0m
+[0m[[0m[0mdebug[0m] [0m[0m	upmc\akka\culto\MidiNote$.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	  C:\Users\Lyes\Desktop\m2\ppc\Projets\TME8_code\PLAYER\target\scala-2.11\classes\upmc\akka\culto\MidiNote$.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	upmc\akka\culto\MidiNote.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	  C:\Users\Lyes\Desktop\m2\ppc\Projets\TME8_code\PLAYER\target\scala-2.11\classes\upmc\akka\culto\MidiNote.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	upmc\akka\culto\player$$anonfun$1.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	  C:\Users\Lyes\Desktop\m2\ppc\Projets\TME8_code\PLAYER\target\scala-2.11\classes\upmc\akka\culto\player$$anonfun$1.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	upmc\akka\culto\player$$anonfun$2.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	  C:\Users\Lyes\Desktop\m2\ppc\Projets\TME8_code\PLAYER\target\scala-2.11\classes\upmc\akka\culto\player$$anonfun$2.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	upmc\akka\culto\player$$anonfun$3.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	  C:\Users\Lyes\Desktop\m2\ppc\Projets\TME8_code\PLAYER\target\scala-2.11\classes\upmc\akka\culto\player$$anonfun$3.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	upmc\akka\culto\player$.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	  C:\Users\Lyes\Desktop\m2\ppc\Projets\TME8_code\PLAYER\target\scala-2.11\classes\upmc\akka\culto\player$.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	upmc\akka\culto\player$Intrument$$anonfun$receive$1$$anonfun$applyOrElse$1.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	  C:\Users\Lyes\Desktop\m2\ppc\Projets\TME8_code\PLAYER\target\scala-2.11\classes\upmc\akka\culto\player$Intrument$$anonfun$receive$1$$anonfun$applyOrElse$1.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	upmc\akka\culto\player$Intrument$$anonfun$receive$1$$anonfun$applyOrElse$2.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	  C:\Users\Lyes\Desktop\m2\ppc\Projets\TME8_code\PLAYER\target\scala-2.11\classes\upmc\akka\culto\player$Intrument$$anonfun$receive$1$$anonfun$applyOrElse$2.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	upmc\akka\culto\player$Intrument$$anonfun$receive$1.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	  C:\Users\Lyes\Desktop\m2\ppc\Projets\TME8_code\PLAYER\target\scala-2.11\classes\upmc\akka\culto\player$Intrument$$anonfun$receive$1.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	upmc\akka\culto\player$Intrument.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	  C:\Users\Lyes\Desktop\m2\ppc\Projets\TME8_code\PLAYER\target\scala-2.11\classes\upmc\akka\culto\player$Intrument.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	upmc\akka\culto\player.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	  C:\Users\Lyes\Desktop\m2\ppc\Projets\TME8_code\PLAYER\target\scala-2.11\classes\upmc\akka\culto\player.class[0m
+[0m[[0m[0mdebug[0m] [0m[0mDone packaging.[0m
