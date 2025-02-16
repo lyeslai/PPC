@@ -1,12 +1,4 @@
-[0m[[0m[31merror[0m] [0m[0mC:\Users\Lyes\Desktop\m2\ppc\Projets\TME8_code\TME8\src\main\scala\bach.scala:248:31: value elements is not a member of upmc.akka.culto.ObjectMusical[0m
-[0m[[0m[31merror[0m] [0m[0m      Sequential(repeat(a, 6).elements.zipWithIndex.map { case (elem, n) =>[0m
-[0m[[0m[31merror[0m] [0m[0m                              ^[0m
-[0m[[0m[31merror[0m] [0m[0mC:\Users\Lyes\Desktop\m2\ppc\Projets\TME8_code\TME8\src\main\scala\bach.scala:249:19: type mismatch;[0m
-[0m[[0m[31merror[0m] [0m[0m found   : Any[0m
-[0m[[0m[31merror[0m] [0m[0m required: upmc.akka.culto.ObjectMusical[0m
-[0m[[0m[31merror[0m] [0m[0m        transpose(elem, n * 2)[0m
-[0m[[0m[31merror[0m] [0m[0m                  ^[0m
-[0m[[0m[31merror[0m] [0m[0mC:\Users\Lyes\Desktop\m2\ppc\Projets\TME8_code\TME8\src\main\scala\bach.scala:249:27: value * is not a member of Any[0m
-[0m[[0m[31merror[0m] [0m[0m        transpose(elem, n * 2)[0m
-[0m[[0m[31merror[0m] [0m[0m                          ^[0m
-[0m[[0m[31merror[0m] [0m[0mthree errors found[0m
+[0m[[0m[31merror[0m] [0m[0mC:\Users\Lyes\Desktop\m2\ppc\Projets\TME8_code\TME8\src\main\scala\bach.scala:48:12: not found: value canon_Bach[0m
+[0m[[0m[31merror[0m] [0m[0m      play(canon_Bach())[0m
+[0m[[0m[31merror[0m] [0m[0m           ^[0m
+[0m[[0m[31merror[0m] [0m[0mone error found[0m

@@ -32,7 +32,8 @@ class BachActor extends Actor {
 def receive = {
     case "START" => {
       println("start")
-      println(exemple)
+      println("L'exemple")
+      play(exemple)
       println("Duration de l'exemple : " +  duration(exemple))
       val copied = copy(exemple)
       println("Objet copié : " + copied)
@@ -41,9 +42,40 @@ def receive = {
       val stretched = stretch(exemple, 1.5)
       println("Durée après étirement : " + duration(stretched))
       println("Lecture de l'exemple étiré :")
-      println(stretched)
+      play(stretched)
+
+
+      val transposed = transpose(exemple, 2)
+      println("La transpose : " + transposed)
+      play(transposed)
+
+
+      val mirrored = mirror(exemple, 60)
+      println("Test du miroir : " + mirrored)
+      play(mirrored)
+
+
+      val retrograded = retrograde(exemple)
+      println("Test retrograde : " + retrograded)
+      play(retrograded)
+
+
+      val repeated = repeat(Note(60, 500, 100), 4)
+      println("Le Repeat : " + repeated)
+      play(repeated)
+
+
+      val canonized = canon(exemple, 500)
+      println("Canon : " + canonized)
+      play(canonized)
+
+      val concatenated = concat(voix1, voix2)
+      println("Test du concat : " + concatenated)
+      play(concatenated)
+
       println("Lecture de l'exemple 2 :")
-      println(exemple2)
+      play(exemple2)
+
       println("Canon bach :")
       play(canon_Bach())
 
@@ -250,21 +282,19 @@ val voix2 = Sequential (List (
   Note (50 , 125 , 100 ),Note (49 , 125 , 100 ),Note (50 , 125 , 100 ), 
   Note (52 , 125 , 100 ),Note (53 , 125 , 100 ),Note (55 , 125 , 100 ),
   Note (58 , 125 , 100 ),Note (57 , 125 , 100 ),Note (55 , 125 , 100 )))
-  def canon_Bach(): ObjectMusical = {
 
-    val voix1Repeated = repeat(voix1, 6)
-    val voix1Transposed = (0 until 6).foldLeft(voix1Repeated)((acc, i) => transpose(acc, 2))
 
-    val voix2Repeated = repeat(voix2, 6)
-    val voix2Transposed = (0 until 6).foldLeft(voix2Repeated)((acc, i) => transpose(acc, 2))
+def canon_Bach(): ObjectMusical = {
+  val voix1Repeted = (0 until 6).map(i => transpose(voix1, i * 2)).toList
+  val voix2Repeted = (0 until 6).map(i => transpose(voix2, i * 2)).toList
+  val voix3Repeted = (0 until 6).map(i => transpose(voix2, i * 2 + 7)).toList
 
-    val voix3 = transpose(voix2, 7)
-    val voix3Repeated = repeat(voix3, 6)
-    val voix3Transposed = (0 until 6).foldLeft(voix3Repeated)((acc, i) => transpose(acc, 2))
-    val voix3Delayed = Sequential(List(Rest(2000), voix3Transposed))
+  val voix1Seq = Sequential(voix1Repeted)
+  val voix2Seq = Sequential(voix2Repeted)
+  val voix3Seq = Sequential(List(Rest(2000)) ++ voix3Repeted)
 
-    Parallel(List(voix1Transposed, voix2Transposed, voix3Delayed))
-  }
+  Parallel(List(voix1Seq, voix2Seq, voix3Seq))
+}
 }
 //////////////////////////////////////////////////
 
