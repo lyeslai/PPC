@@ -10,9 +10,10 @@ abstract class ObjetMusical
  	case class Chord (date:Int, notes:List[Note]) extends ObjetMusical
  	case class Measure (chords:List[Chord]) extends ObjetMusical
  	case class Play_Measure (measure:Measure)
-	case class Elected_Leader()
 
  	case class GetMeasure (num:Int)
+	case class GetAndForwardMeasure(num:Int, actor:Terminal)
+	case class ForwardMeasureTo(measure: Measure, actor:Terminal)
  	case class Start()
 
 val measures1 : List [Measure] = List (
@@ -866,8 +867,8 @@ class DataBaseActor () extends Actor {
     import DataBaseActor._
 
     def receive = {
-        case GetMeasure (num) => {
-        sender ! measures(num)
+			case GetAndForwardMeasure(num,forwardTo) => {
+				sender ! ForwardMeasureTo(measures(num) , forwardTo)
     }
 }
 

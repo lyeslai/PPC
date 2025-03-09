@@ -1,0 +1,7 @@
+[0m[[0m[33mwarn[0m] [0m[0mC:\Users\freecs\Desktop\M2\PPC\PPC\Projet_code\src\main\scala\ChefOrchestre.scala:5:26: imported `Start' is permanently hidden by definition of object Start in package leader[0m
+[0m[[0m[33mwarn[0m] [0m[0mimport upmc.akka.leader.{Start, Terminal}[0m
+[0m[[0m[33mwarn[0m] [0m[0m                         ^[0m
+[0m[[0m[33mwarn[0m] [0m[0mC:\Users\freecs\Desktop\M2\PPC\PPC\Projet_code\src\main\scala\ChefOrchestre.scala:5:33: imported `Terminal' is permanently hidden by definition of object Terminal in package leader[0m
+[0m[[0m[33mwarn[0m] [0m[0mimport upmc.akka.leader.{Start, Terminal}[0m
+[0m[[0m[33mwarn[0m] [0m[0m                                ^[0m
+[0m[[0m[33mwarn[0m] [0m[0mtwo warnings found[0m
