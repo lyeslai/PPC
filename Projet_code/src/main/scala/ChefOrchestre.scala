@@ -1,19 +1,18 @@
+
 package upmc.akka.leader
 
-import akka.actor.{Actor, Props}
-import upmc.akka.leader.DataBaseActor.GetMeasure
-import upmc.akka.leader.{Start, Terminal}
-
+import akka.actor._
+import upmc.akka.leader.DataBaseActor.{GetMeasure, Measure}
 import scala.util.Random
+import scala.concurrent.duration._
+import scala.concurrent.ExecutionContext.Implicits.global
 
 class ChefOrchestre(val id: Int, val terminaux: List[Terminal]) extends Actor {
 
-  // 30 seconds timeout then the leader the whole system is done
-  val database = context.actorOf(Props(new DataBaseActor()), name = "database")
-  var compteur = 0
-  var index = 0
+  val database = context.actorOf(Props[DataBaseActor], name = "database")
+  var measureCounter = 0
 
-  var partie1 = Array(
+   val partie1 = Array(
     Array(96, 22, 141, 41, 105, 122, 11, 30),
     Array(32, 6, 128, 63, 146, 46, 134, 81),
     Array(69, 95, 158, 13, 153, 55, 110, 24),
@@ -27,7 +26,7 @@ class ChefOrchestre(val id: Int, val terminaux: List[Terminal]) extends Actor {
     Array(54, 130, 10, 103, 28, 37, 106, 5)
   )
 
-  var partie2 = Array(
+  val partie2 = Array(
     Array(70, 121, 26, 9, 112, 49, 109, 14),
     Array(117, 39, 126, 56, 174, 18, 116, 83),
     Array(66, 139, 15, 132, 73, 58, 145, 79),
@@ -41,29 +40,39 @@ class ChefOrchestre(val id: Int, val terminaux: List[Terminal]) extends Actor {
     Array(35, 20, 108, 92, 12, 124, 44, 131)
   )
 
-  // Liste des musiciens vivants
-  var aliveMusicians: List[Terminal] = terminaux
+  override def preStart(): Unit = {
+    println("Chef d'orchestre démarré.") // Affiché une seule fois
+    self ! Start
+  }
 
-  def receive = {
+  def receive: Receive = {
     case Start =>
-      println("Chef d'orchestre is created")
-      // TODO : move to new case, where leader waits for 30 s for musicians
-      val diceRoll = Random.nextInt(6) + Random.nextInt(6)
-      val partie = compteur % 16
-      if (partie < 8) {
-        index = partie1(diceRoll)(compteur % 8)
-      } else {
-        index = partie2(diceRoll)(compteur % 8)
-      }
+      playNextMeasure()
 
-      compteur += 1
-      database.forward(GetMeasure(index - 1))
+    case measure: Measure =>
+      val autresMusiciens = terminaux.filterNot(_.id == id)
+      val randomMusicien = autresMusiciens(Random.nextInt(autresMusiciens.size))
+      println(s"🎵 Envoi mesure à musicien ${randomMusicien.id}")
 
-    case MusicianFailed(musicianId) =>
-      // Un musicien est mort, le retirer de la liste des vivants
-      aliveMusicians = aliveMusicians.filter(_.id != musicianId)
-      println(s"Musicien $musicianId est mort.")
+      context.actorSelection(
+        s"akka.tcp://MozartSystem${randomMusicien.id}@${randomMusicien.ip}:${randomMusicien.port}/user/Musicien${randomMusicien.id}"
+      ) ! Play_Measure(measure)
 
-    case _ => println("Message inconnu reçu")
+      context.system.scheduler.scheduleOnce(2.seconds, self, Start)
+  }
+
+  def playNextMeasure(): Unit = {
+    val diceRoll = Random.nextInt(6) + Random.nextInt(6)
+    val partie = measureCounter % 16
+    val index =
+      if (partie < 8) partie1(diceRoll % partie1.length)(measureCounter % 8)
+      else partie2(diceRoll % partie2.length)(measureCounter % 8)
+
+    measureCounter += 1
+    database ! GetMeasure(index - 1)
   }
 }
+
+
+
+

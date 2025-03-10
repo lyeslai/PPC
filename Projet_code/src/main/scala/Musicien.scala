@@ -1,42 +1,49 @@
 package upmc.akka.leader
 
-import akka.actor.TypedActor.dispatcher
 import akka.actor._
-import upmc.akka.leader.DataBaseActor.{Elected_Leader, Play_Measure}
+import scala.concurrent.ExecutionContext.Implicits.global
 
 import javax.sound.midi._
 import javax.sound.midi.ShortMessage._
 import scala.concurrent.duration.DurationInt
-
-case class Start()
+import scala.concurrent.ExecutionContext.Implicits.global
 
 class Musicien(val id: Int, val terminaux: List[Terminal]) extends Actor {
 
-  // Les differents acteurs du systeme
-  val displayActor = context.actorOf(Props[DisplayActor], name = "displayActor")
-  val playerActor = context.actorOf(Props[PlayerActor], name = "playerActor")
-  val chefOrchestre = context.actorOf(Props(new ChefOrchestre(id, terminaux)), name = "chefOrchestre")
+  val displayActor = context.actorOf(Props[DisplayActor], "displayActor")
+  val playerActor = context.actorOf(Props[PlayerActor], "playerActor")
+  var chefOrchestre = context.actorOf(Props(new ChefOrchestre(id, terminaux)), "chefOrchestre")
+  var aliveMusicians = terminaux
 
   def receive = {
     case Start =>
-      displayActor ! Message("Musicien " + this.id + " is created")
+      displayActor ! Message(s"Musicien $id is created")
+      if (id == terminaux.map(_.id).min) {
+        chefOrchestre ! Start
+        displayActor ! Message(s"Musicien $id est le chef d'orchestre initial.")
+      }
 
     case Play_Measure(measure) =>
       playerActor ! measure
 
     case Ping =>
-      sender() ! Pong(Terminal(id, terminaux(id).ip, terminaux(id).port))
+      sender() ! Pong(terminaux(id))
 
     case ElectNewConductor =>
-      // Élection d'un nouveau chef d'orchestre
-      if (id == terminaux.map(_.id).min) {
+      val newLeaderId = aliveMusicians.map(_.id).min
+      if (id == newLeaderId) {
+        chefOrchestre = context.actorOf(Props(new ChefOrchestre(id, terminaux)), "chefOrchestre")
         chefOrchestre ! Start
-        displayActor ! Message(s"Musicien $id est maintenant le chef d'orchestre.")
+        displayActor ! Message(s"🎉 Musicien $id est élu nouveau chef.")
       }
 
-    case _ => // Gérer d'autres messages si nécessaire
+    case MusicianFailed(failedId) =>
+      aliveMusicians = aliveMusicians.filterNot(_.id == failedId)
+      displayActor ! Message(s"Le musicien $failedId a échoué.")
   }
 }
+
+
 
 object PlayerActor {
   case class MidiNote(pitch: Int, vel: Int, dur: Int, at: Int)

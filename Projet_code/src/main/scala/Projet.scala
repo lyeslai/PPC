@@ -3,42 +3,28 @@ package upmc.akka.leader
 import com.typesafe.config.ConfigFactory
 import akka.actor._
 
-case class Terminal (id:Int, ip:String, port:Int)
-
 object Projet {
+  def main(args: Array[String]) {
+    if (args.length != 1 || !args(0).forall(_.isDigit)) {
+      println("Erreur de syntaxe : run <num>")
+      sys.exit(1)
+    }
 
-   
-     def main (args : Array[String]) {
-          // Gestion des erreurs
-          if (args.size != 1) {
-               println ("Erreur de syntaxe : run <num>")
-               sys.exit(1)
-          }
+    val id = args(0).toInt
+    val terminaux = (0 to 3).map { i =>
+      val conf = ConfigFactory.load().getConfig(s"system$i")
+      Terminal(i, conf.getString("akka.remote.netty.tcp.hostname"), conf.getInt("akka.remote.netty.tcp.port"))
+    }.toList
 
-          val id : Int = args(0).toInt
+    println(terminaux)
 
-          if (id < 0 || id > 3) {
-               println ("Erreur : <num> doit etre compris entre 0 et 3")
-               sys.exit(1)
-          }
+    val system = ActorSystem(s"MozartSystem$id", ConfigFactory.load().getConfig(s"system$id"))
+    val musicien = system.actorOf(Props(new Musicien(id, terminaux)), s"Musicien$id")
+    val deadCollector = system.actorOf(Props(new DeadCollector(terminaux)), s"DeadCollector$id")
 
-          var musicienlist = List[Terminal]()
-          
-          // recuperation des adresses de tous les musiciens
-          // hardcoded path name
-          for(i <- 3 to 0 by -1){
-               val address = ConfigFactory.load().getConfig("system"+ i).getValue("akka.remote.netty.tcp.hostname").render()
-               val port = ConfigFactory.load().getConfig("system"+ i).getValue("akka.remote.netty.tcp.port").render()
-               musicienlist = Terminal(i, address, port.toInt)::musicienlist
-          }
+    musicien ! Start
 
-          println(musicienlist)
-
-          // Initialisation du node <id>
-          val system = ActorSystem("MozartSystem" + id, ConfigFactory.load().getConfig("system" + id))
-          val musicien = system.actorOf(Props(new Musicien(id, musicienlist)), "Musicien"+id)
-          val deadCollector = system.actorOf(Props(new DeadCollector(musicienlist)), "DeadCollector"+id)
-          musicien ! Start
-     }
-
+    scala.io.StdIn.readLine()
+    system.terminate()
+  }
 }

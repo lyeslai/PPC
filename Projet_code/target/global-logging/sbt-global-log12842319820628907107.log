@@ -1,0 +1,15 @@
+[0m[[0m[0mdebug[0m] [0m[0m> Exec(run 0, Some(94627158-36c4-4015-b0dc-1d23a2d10cbd), Some(CommandSource(console0)))[0m
+[0m[[0m[0mdebug[0m] [0m[0mEvaluating tasks: Compile / run[0m
+[0m[[0m[0mdebug[0m] [0m[0mRunning task... Cancel: Signal, check cycles: false, forcegc: true[0m
+[0m[[0m[0minfo[0m] [0m[0mcompiling 2 Scala sources to C:\Users\Lyes\Desktop\m2\ppc\Projets\Projet_code\target\scala-2.11\classes ...[0m
+[0m[[0m[33mwarn[0m] [0m[0mC:\Users\Lyes\Desktop\m2\ppc\Projets\Projet_code\src\main\scala\ChefOrchestre.scala:4:61: imported `Play_Measure' is permanently hidden by definition of object Play_Measure in package leader[0m
+[0m[[0m[33mwarn[0m] [0m[0mimport upmc.akka.leader.DataBaseActor.{GetMeasure, Measure, Play_Measure}[0m
+[0m[[0m[33mwarn[0m] [0m[0m                                                            ^[0m
+[0m[[0m[31merror[0m] [0m[0mC:\Users\Lyes\Desktop\m2\ppc\Projets\Projet_code\src\main\scala\ChefOrchestre.scala:58:30: value scheduleWithFixedDelay is not a member of akka.actor.Scheduler[0m
+[0m[[0m[31merror[0m] [0m[0m    context.system.scheduler.scheduleWithFixedDelay(0.seconds, 2.seconds) {[0m
+[0m[[0m[31merror[0m] [0m[0m                             ^[0m
+[0m[[0m[33mwarn[0m] [0m[0mone warning found[0m
+[0m[[0m[31merror[0m] [0m[0mone error found[0m
+[0m[[0m[31merror[0m] [0m[0m(Compile / [31mcompileIncremental[0m) Compilation failed[0m
+[0m[[0m[31merror[0m] [0m[0mTotal time: 1 s, completed 10 mars 2025, 16:30:04[0m
+[0m[[0m[0mdebug[0m] [0m[0m> Exec(shell, None, None)[0m
