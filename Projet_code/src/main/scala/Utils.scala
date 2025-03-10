@@ -3,6 +3,7 @@ package upmc.akka.leader
 // Général
 case object Start
 case object CheckAlive
+case object CheckMusicians
 case object Ping
 case class Pong(terminal: Terminal)
 case object ElectNewConductor

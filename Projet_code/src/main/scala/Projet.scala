@@ -23,8 +23,5 @@ object Projet {
     val deadCollector = system.actorOf(Props(new DeadCollector(terminaux)), s"DeadCollector$id")
 
     musicien ! Start
-
-    scala.io.StdIn.readLine()
-    system.terminate()
   }
 }

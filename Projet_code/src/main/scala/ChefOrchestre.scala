@@ -1,4 +1,3 @@
-
 package upmc.akka.leader
 
 import akka.actor._
@@ -7,12 +6,12 @@ import scala.util.Random
 import scala.concurrent.duration._
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class ChefOrchestre(val id: Int, val terminaux: List[Terminal]) extends Actor {
+class ChefOrchestre(val id: Int, var terminaux: List[Terminal]) extends Actor {
 
   val database = context.actorOf(Props[DataBaseActor], name = "database")
   var measureCounter = 0
 
-   val partie1 = Array(
+  val partie1 = Array(
     Array(96, 22, 141, 41, 105, 122, 11, 30),
     Array(32, 6, 128, 63, 146, 46, 134, 81),
     Array(69, 95, 158, 13, 153, 55, 110, 24),
@@ -41,25 +40,58 @@ class ChefOrchestre(val id: Int, val terminaux: List[Terminal]) extends Actor {
   )
 
   override def preStart(): Unit = {
-    println("Chef d'orchestre démarré.") // Affiché une seule fois
+    println("Chef d'orchestre démarré.")
     self ! Start
   }
 
-  def receive: Receive = {
-    case Start =>
+def receive: Receive = {
+  case Start =>
+    if (terminaux.size >= 1) {
+      println( "En attente d'au moins un musicien...")
+      context.system.scheduler.scheduleOnce(5.seconds, self, CheckMusicians)
+    } else {
+      println("Aucun musicien présent, arrêt dans 30s.")
+      context.system.scheduler.scheduleOnce(30.seconds)(context.system.terminate())
+    }
+
+  case CheckMusicians =>
+    val musiciensVivants = terminaux.filterNot(_.id == id)
+    if (musiciensVivants.nonEmpty || terminaux.size == 1) {
       playNextMeasure()
+    } else {
+      println("Aucun musicien disponible, réessai dans 5s.")
+      context.system.scheduler.scheduleOnce(5.seconds, self, CheckMusicians)
+    }
 
-    case measure: Measure =>
-      val autresMusiciens = terminaux.filterNot(_.id == id)
-      val randomMusicien = autresMusiciens(Random.nextInt(autresMusiciens.size))
-      println(s"🎵 Envoi mesure à musicien ${randomMusicien.id}")
+  case measure: Measure =>
+    val musiciensVivants = terminaux.filterNot(_.id == id)
+    if (musiciensVivants.nonEmpty || terminaux.size == 1) {
+      // Envoi la mesure à tous les musiciens disponibles
+      musiciensVivants.foreach { musicien =>
+        println(s"Envoi mesure à musicien ${musicien.id}")
 
-      context.actorSelection(
-        s"akka.tcp://MozartSystem${randomMusicien.id}@${randomMusicien.ip}:${randomMusicien.port}/user/Musicien${randomMusicien.id}"
-      ) ! Play_Measure(measure)
+        context.actorSelection(
+          s"akka.tcp://MozartSystem${musicien.id}@${musicien.ip}:${musicien.port}/user/Musicien${musicien.id}"
+        ) ! Play_Measure(measure)
+      }
+
+      // Si un seul musicien est disponible (lui-même), il joue la mesure
+      if (musiciensVivants.isEmpty) {
+        println(s"Le chef d'orchestre joue la mesure lui-même.")
+        context.actorSelection(
+          s"akka.tcp://MozartSystem${id}@${terminaux.find(_.id == id).get.ip}:${terminaux.find(_.id == id).get.port}/user/Musicien${id}"
+        ) ! Play_Measure(measure)
+      }
 
       context.system.scheduler.scheduleOnce(2.seconds, self, Start)
-  }
+    } else {
+      println("Aucun musicien vivant, arrêt.")
+      context.system.terminate()
+    }
+
+  case MusicianFailed(deadId) =>
+    terminaux = terminaux.filterNot(_.id == deadId)
+}
 
   def playNextMeasure(): Unit = {
     val diceRoll = Random.nextInt(6) + Random.nextInt(6)
@@ -72,7 +104,3 @@ class ChefOrchestre(val id: Int, val terminaux: List[Terminal]) extends Actor {
     database ! GetMeasure(index - 1)
   }
 }
-
-
-
-

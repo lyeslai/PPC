@@ -1,2 +1,43 @@
-[0m[[0m[33mwarn[0m] [0m[0mthere were two feature warnings; re-run with -feature for details[0m
-[0m[[0m[33mwarn[0m] [0m[0mone warning found[0m
+[0m[[0m[31merror[0m] [0m[0mC:\Users\Lyes\Desktop\m2\ppc\Projets\Projet_code\src\main\scala\ConductorActor.scala:4:22: object mozart is not a member of package upmc.akka.ppc[0m
+[0m[[0m[31merror[0m] [0m[0mimport upmc.akka.ppc.mozart.DataBaseActor._[0m
+[0m[[0m[31merror[0m] [0m[0m                     ^[0m
+[0m[[0m[31merror[0m] [0m[0mC:\Users\Lyes\Desktop\m2\ppc\Projets\Projet_code\src\main\scala\Musicien.scala:6:22: object mozart is not a member of package upmc.akka.ppc[0m
+[0m[[0m[31merror[0m] [0m[0mimport upmc.akka.ppc.mozart._[0m
+[0m[[0m[31merror[0m] [0m[0m                     ^[0m
+[0m[[0m[31merror[0m] [0m[0mC:\Users\Lyes\Desktop\m2\ppc\Projets\Projet_code\src\main\scala\Musicien.scala:7:22: object mozart is not a member of package upmc.akka.ppc[0m
+[0m[[0m[31merror[0m] [0m[0mimport upmc.akka.ppc.mozart.DataBaseActor._[0m
+[0m[[0m[31merror[0m] [0m[0m                     ^[0m
+[0m[[0m[31merror[0m] [0m[0mC:\Users\Lyes\Desktop\m2\ppc\Projets\Projet_code\src\main\scala\ConductorActor.scala:10:56: not found: type Terminal[0m
+[0m[[0m[31merror[0m] [0m[0mclass ConductorActor(parent: Musicien, terminaux: List[Terminal]) extends Actor {[0m
+[0m[[0m[31merror[0m] [0m[0m                                                       ^[0m
+[0m[[0m[31merror[0m] [0m[0mC:\Users\Lyes\Desktop\m2\ppc\Projets\Projet_code\src\main\scala\ConductorActor.scala:12:40: not found: type DataBaseActor[0m
+[0m[[0m[31merror[0m] [0m[0m  val database = context.actorOf(Props[DataBaseActor], name = "database")[0m
+[0m[[0m[31merror[0m] [0m[0m                                       ^[0m
+[0m[[0m[31merror[0m] [0m[0mC:\Users\Lyes\Desktop\m2\ppc\Projets\Projet_code\src\main\scala\ConductorActor.scala:21:19: not found: type Measure[0m
+[0m[[0m[31merror[0m] [0m[0m    case measure: Measure =>[0m
+[0m[[0m[31merror[0m] [0m[0m                  ^[0m
+[0m[[0m[31merror[0m] [0m[0mC:\Users\Lyes\Desktop\m2\ppc\Projets\Projet_code\src\main\scala\ConductorActor.scala:25:34: not found: value Utile[0m
+[0m[[0m[31merror[0m] [0m[0m          context.actorSelection(Utile.buildRemoteConnectionPath(musicien)) ! Play_Measure(measure)[0m
+[0m[[0m[31merror[0m] [0m[0m                                 ^[0m
+[0m[[0m[31merror[0m] [0m[0mC:\Users\Lyes\Desktop\m2\ppc\Projets\Projet_code\src\main\scala\ConductorActor.scala:25:79: not found: value Play_Measure[0m
+[0m[[0m[31merror[0m] [0m[0m          context.actorSelection(Utile.buildRemoteConnectionPath(musicien)) ! Play_Measure(measure)[0m
+[0m[[0m[31merror[0m] [0m[0m                                                                              ^[0m
+[0m[[0m[31merror[0m] [0m[0mC:\Users\Lyes\Desktop\m2\ppc\Projets\Projet_code\src\main\scala\Musicien.scala:16:45: not found: type Terminal[0m
+[0m[[0m[31merror[0m] [0m[0mclass Musicien(val id: Int, val terms: List[Terminal]) extends Actor {[0m
+[0m[[0m[31merror[0m] [0m[0m                                            ^[0m
+[0m[[0m[31merror[0m] [0m[0mC:\Users\Lyes\Desktop\m2\ppc\Projets\Projet_code\src\main\scala\Musicien.scala:21:5: not found: value Terminal[0m
+[0m[[0m[31merror[0m] [0m[0m    Terminal(terminal.id, ip, terminal.port)[0m
+[0m[[0m[31merror[0m] [0m[0m    ^[0m
+[0m[[0m[31merror[0m] [0m[0mC:\Users\Lyes\Desktop\m2\ppc\Projets\Projet_code\src\main\scala\Musicien.scala:24:44: not found: type DisplayActor[0m
+[0m[[0m[31merror[0m] [0m[0m  val displayActor = context.actorOf(Props[DisplayActor], name = "displayActor")[0m
+[0m[[0m[31merror[0m] [0m[0m                                           ^[0m
+[0m[[0m[31merror[0m] [0m[0mC:\Users\Lyes\Desktop\m2\ppc\Projets\Projet_code\src\main\scala\Musicien.scala:29:15: not found: type HeartActor[0m
+[0m[[0m[31merror[0m] [0m[0m    Props(new HeartActor(this.id, terminaux, joinDate)),[0m
+[0m[[0m[31merror[0m] [0m[0m              ^[0m
+[0m[[0m[31merror[0m] [0m[0mC:\Users\Lyes\Desktop\m2\ppc\Projets\Projet_code\src\main\scala\Musicien.scala:33:15: not found: type PlayerActor[0m
+[0m[[0m[31merror[0m] [0m[0m    Props(new PlayerActor()),[0m
+[0m[[0m[31merror[0m] [0m[0m              ^[0m
+[0m[[0m[31merror[0m] [0m[0mC:\Users\Lyes\Desktop\m2\ppc\Projets\Projet_code\src\main\scala\Musicien.scala:81:10: not found: value PlayMeasure[0m
+[0m[[0m[31merror[0m] [0m[0m    case PlayMeasure(measure) => {[0m
+[0m[[0m[31merror[0m] [0m[0m         ^[0m
+[0m[[0m[31merror[0m] [0m[0m14 errors found[0m

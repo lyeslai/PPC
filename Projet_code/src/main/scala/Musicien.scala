@@ -8,41 +8,60 @@ import javax.sound.midi.ShortMessage._
 import scala.concurrent.duration.DurationInt
 import scala.concurrent.ExecutionContext.Implicits.global
 
+
 class Musicien(val id: Int, val terminaux: List[Terminal]) extends Actor {
 
   val displayActor = context.actorOf(Props[DisplayActor], "displayActor")
   val playerActor = context.actorOf(Props[PlayerActor], "playerActor")
-  var chefOrchestre = context.actorOf(Props(new ChefOrchestre(id, terminaux)), "chefOrchestre")
+  val chefOrchestre = context.actorOf(Props(new ChefOrchestre(id, terminaux)), "chefOrchestre")
+
   var aliveMusicians = terminaux
 
-  def receive = {
-    case Start =>
-      displayActor ! Message(s"Musicien $id is created")
-      if (id == terminaux.map(_.id).min) {
-        chefOrchestre ! Start
-        displayActor ! Message(s"Musicien $id est le chef d'orchestre initial.")
+  override def preStart(): Unit = {
+    terminaux.filterNot(_.id == id).foreach { terminal =>
+      context.actorSelection(
+        s"akka.tcp://MozartSystem${terminal.id}@${terminal.ip}:${terminal.port}/user/Musicien${terminal.id}"
+      ).resolveOne(5.seconds).onComplete {
+        case scala.util.Success(actorRef) => context.watch(actorRef)
+        case scala.util.Failure(_) => // Ignore les erreurs
       }
-
-    case Play_Measure(measure) =>
-      playerActor ! measure
-
-    case Ping =>
-      sender() ! Pong(terminaux(id))
-
-    case ElectNewConductor =>
-      val newLeaderId = aliveMusicians.map(_.id).min
-      if (id == newLeaderId) {
-        chefOrchestre = context.actorOf(Props(new ChefOrchestre(id, terminaux)), "chefOrchestre")
-        chefOrchestre ! Start
-        displayActor ! Message(s"🎉 Musicien $id est élu nouveau chef.")
-      }
-
-    case MusicianFailed(failedId) =>
-      aliveMusicians = aliveMusicians.filterNot(_.id == failedId)
-      displayActor ! Message(s"Le musicien $failedId a échoué.")
+    }
   }
-}
 
+ def receive = {
+  case Start =>
+    displayActor ! Message(s"Musicien $id is created")
+    if (id == terminaux.map(_.id).min) {
+      chefOrchestre ! Start
+      displayActor ! Message(s"Musicien $id est le chef d'orchestre initial.")
+    } else {
+      displayActor ! Message(s"Musicien $id attend le chef d'orchestre.")
+    }
+
+  case Play_Measure(measure) =>
+    // Seul le chef d'orchestre envoie des mesures
+    if (id == aliveMusicians.map(_.id).min) {
+      playerActor ! measure
+    }
+
+  case Terminated(actorRef) =>
+    val deadId = actorRef.path.name.stripPrefix("Musicien").toInt
+    aliveMusicians = aliveMusicians.filterNot(_.id == deadId)
+    displayActor ! Message(s"Le musicien $deadId est mort.")
+    self ! ElectNewConductor
+
+  case ElectNewConductor =>
+    val newLeaderId = aliveMusicians.map(_.id).min
+    if (id == newLeaderId) {
+      chefOrchestre ! Start
+      displayActor ! Message(s"🎉 Musicien $id est élu nouveau chef.")
+    }
+
+  case MusicianFailed(failedId) =>
+    aliveMusicians = aliveMusicians.filterNot(_.id == failedId)
+    displayActor ! Message(s"Le musicien $failedId est mort.")
+}
+}
 
 
 object PlayerActor {
