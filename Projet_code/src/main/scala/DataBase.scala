@@ -1153,7 +1153,13 @@ Chord  (1391 , List (Note(55 ,201, 78))),
 Chord  (1592 , List (Note(59 ,193, 88))))))
 
 val measures : List [Measure] = measures1 ::: measures2
+case object CheckAlive
+case object Ping
+case class Pong(terminal: Terminal)
+case object ElectNewConductor
+case class MusicianFailed(musicianId: Int)
 }
+
 
 //////////////////////////
 

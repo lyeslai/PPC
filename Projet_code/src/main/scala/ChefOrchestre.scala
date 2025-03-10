@@ -6,10 +6,9 @@ import upmc.akka.leader.{Start, Terminal}
 
 import scala.util.Random
 
-class ChefOrchestre (val id:Int, val terminaux:List[Terminal]) extends Actor {
+class ChefOrchestre(val id: Int, val terminaux: List[Terminal]) extends Actor {
 
   // 30 seconds timeout then the leader the whole system is done
-
   val database = context.actorOf(Props(new DataBaseActor()), name = "database")
   var compteur = 0
   var index = 0
@@ -42,12 +41,12 @@ class ChefOrchestre (val id:Int, val terminaux:List[Terminal]) extends Actor {
     Array(35, 20, 108, 92, 12, 124, 44, 131)
   )
 
-
+  // Liste des musiciens vivants
+  var aliveMusicians: List[Terminal] = terminaux
 
   def receive = {
     case Start =>
       println("Chef d'orchestre is created")
-
       // TODO : move to new case, where leader waits for 30 s for musicians
       val diceRoll = Random.nextInt(6) + Random.nextInt(6)
       val partie = compteur % 16
@@ -60,7 +59,10 @@ class ChefOrchestre (val id:Int, val terminaux:List[Terminal]) extends Actor {
       compteur += 1
       database.forward(GetMeasure(index - 1))
 
-
+    case MusicianFailed(musicianId) =>
+      // Un musicien est mort, le retirer de la liste des vivants
+      aliveMusicians = aliveMusicians.filter(_.id != musicianId)
+      println(s"Musicien $musicianId est mort.")
 
     case _ => println("Message inconnu reçu")
   }
