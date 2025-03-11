@@ -47,7 +47,7 @@ class ChefOrchestre(val id: Int, var terminaux: List[Terminal]) extends Actor {
 def receive: Receive = {
   case Start =>
     if (terminaux.size >= 1) {
-      println( "En attente d'au moins un musicien...")
+      println("En attente d'au moins un musicien...")
       context.system.scheduler.scheduleOnce(5.seconds, self, CheckMusicians)
     } else {
       println("Aucun musicien présent, arrêt dans 30s.")
@@ -56,7 +56,8 @@ def receive: Receive = {
 
   case CheckMusicians =>
     val musiciensVivants = terminaux.filterNot(_.id == id)
-    if (musiciensVivants.nonEmpty || terminaux.size == 1) {
+    if (musiciensVivants.nonEmpty) {
+      println("Tous les musiciens sont prêts. Début de la musique.")
       playNextMeasure()
     } else {
       println("Aucun musicien disponible, réessai dans 5s.")
@@ -65,25 +66,14 @@ def receive: Receive = {
 
   case measure: Measure =>
     val musiciensVivants = terminaux.filterNot(_.id == id)
-    if (musiciensVivants.nonEmpty || terminaux.size == 1) {
+    if (musiciensVivants.nonEmpty) {
       // Envoi la mesure à tous les musiciens disponibles
       musiciensVivants.foreach { musicien =>
         println(s"Envoi mesure à musicien ${musicien.id}")
-
         context.actorSelection(
           s"akka.tcp://MozartSystem${musicien.id}@${musicien.ip}:${musicien.port}/user/Musicien${musicien.id}"
         ) ! Play_Measure(measure)
       }
-
-      // Si un seul musicien est disponible (lui-même), il joue la mesure
-      if (musiciensVivants.isEmpty) {
-        println(s"Le chef d'orchestre joue la mesure lui-même.")
-        context.actorSelection(
-          s"akka.tcp://MozartSystem${id}@${terminaux.find(_.id == id).get.ip}:${terminaux.find(_.id == id).get.port}/user/Musicien${id}"
-        ) ! Play_Measure(measure)
-      }
-
-      context.system.scheduler.scheduleOnce(2.seconds, self, Start)
     } else {
       println("Aucun musicien vivant, arrêt.")
       context.system.terminate()

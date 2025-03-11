@@ -8,7 +8,6 @@ import javax.sound.midi.ShortMessage._
 import scala.concurrent.duration.DurationInt
 import scala.concurrent.ExecutionContext.Implicits.global
 
-
 class Musicien(val id: Int, val terminaux: List[Terminal]) extends Actor {
 
   val displayActor = context.actorOf(Props[DisplayActor], "displayActor")
@@ -22,11 +21,15 @@ class Musicien(val id: Int, val terminaux: List[Terminal]) extends Actor {
       context.actorSelection(
         s"akka.tcp://MozartSystem${terminal.id}@${terminal.ip}:${terminal.port}/user/Musicien${terminal.id}"
       ).resolveOne(5.seconds).onComplete {
-        case scala.util.Success(actorRef) => context.watch(actorRef)
-        case scala.util.Failure(_) => // Ignore les erreurs
+        case scala.util.Success(actorRef) =>
+          context.watch(actorRef)
+          displayActor ! Message(s"Musicien ${terminal.id} est prêt.")
+        case scala.util.Failure(_) =>
+          displayActor ! Message(s"Musicien ${terminal.id} n'est pas joignable.")
       }
     }
   }
+
 
  def receive = {
   case Start =>
@@ -41,6 +44,14 @@ class Musicien(val id: Int, val terminaux: List[Terminal]) extends Actor {
   case Play_Measure(measure) =>
     // Seul le chef d'orchestre envoie des mesures
     if (id == aliveMusicians.map(_.id).min) {
+      // Envoyer la mesure à tous les autres musiciens vivants
+      aliveMusicians.filter(_.id != id).foreach { musicien =>
+        context.actorSelection(
+          s"akka.tcp://MozartSystem${musicien.id}@${musicien.ip}:${musicien.port}/user/Musicien${musicien.id}"
+        ) ! Play_Measure(measure)
+      }
+    } else {
+      // Si ce n'est pas le chef d'orchestre, jouer la mesure
       playerActor ! measure
     }
 
@@ -52,9 +63,11 @@ class Musicien(val id: Int, val terminaux: List[Terminal]) extends Actor {
 
   case ElectNewConductor =>
     val newLeaderId = aliveMusicians.map(_.id).min
+    displayActor ! Message(s"Musicien $id: Nouveau chef élu est $newLeaderId")
     if (id == newLeaderId) {
       chefOrchestre ! Start
       displayActor ! Message(s"🎉 Musicien $id est élu nouveau chef.")
+      println(s"Musicien $id: Je suis maintenant le chef d'orchestre.")
     }
 
   case MusicianFailed(failedId) =>
@@ -62,8 +75,6 @@ class Musicien(val id: Int, val terminaux: List[Terminal]) extends Actor {
     displayActor ! Message(s"Le musicien $failedId est mort.")
 }
 }
-
-
 object PlayerActor {
   case class MidiNote(pitch: Int, vel: Int, dur: Int, at: Int)
   val info = MidiSystem.getMidiDeviceInfo().filter(_.getName == "Gervill").headOption

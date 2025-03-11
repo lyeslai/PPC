@@ -23,5 +23,7 @@ object Projet {
     val deadCollector = system.actorOf(Props(new DeadCollector(terminaux)), s"DeadCollector$id")
 
     musicien ! Start
+    // Attendre que tous les musiciens soient prêts
+    Thread.sleep(5000) // Attendre 5 secondes
   }
 }
