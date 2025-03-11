@@ -37,8 +37,10 @@ object Projet {
           // Initialisation du node <id>
           val system = ActorSystem("MozartSystem" + id, ConfigFactory.load().getConfig("system" + id))
           val electionActor = system.actorOf(Props(new ElectionActor(musicienlist)), "ElectionActor")
-          val musicien = system.actorOf(Props(new Musicien(id, musicienlist, electionActor)), "Musicien"+id)
+          val deadCollector = system.actorOf(Props(new DeadCollector(musicienlist, electionActor)), "DeadCollector")
+          val musicien = system.actorOf(Props(new Musicien(id, musicienlist, electionActor, deadCollector)), "Musicien"+id)
           musicien ! Start
+          deadCollector! Start
           electionActor ! Start
      }
 

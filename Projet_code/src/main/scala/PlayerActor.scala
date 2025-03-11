@@ -47,6 +47,7 @@ class PlayerActor () extends Actor{
 
   def receive: Receive = {
     case Measure (l) => {
+      println("received measure")
       for (i <- l.indices){
         val cursorChord = l(i)
         val at = cursorChord.date

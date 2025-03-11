@@ -3,7 +3,7 @@ package upmc.akka.leader
 import akka.actor.{Actor, ActorRef, Props}
 import upmc.akka.leader.DataBaseActor.Measure
 
-import scala.concurrent.duration.DurationInt
+import scala.concurrent.duration.{DurationInt, FiniteDuration}
 import scala.util.Random
 
 
@@ -13,6 +13,8 @@ class ProviderActor() extends Actor {
 
   var compteur = 0
   var index = 0
+
+  var toBeStopped = false
 
   var partie1 = Array(
     Array(96, 22, 141, 41, 105, 122, 11, 30),
@@ -43,11 +45,16 @@ class ProviderActor() extends Actor {
   )
 
   def receive: Receive = {
+
+    case StopP =>
+      println("ProviderActor reçu StopP")
+      toBeStopped = true
+
     case StartPlayerAtTerminal(terminal) =>
       println(s"Starting music with musician ${terminal.id}")
       val diceRoll = Random.nextInt(6) + Random.nextInt(6) + 2
       val num = diceRoll - 2
-      // Choix de la partie en fonction du compteur (par exemple)
+      // Choix de la partie en fonction du compteur
       if (compteur % 16 < 8) {
         index = partie1(num)(compteur % 8)
       } else {
@@ -57,16 +64,29 @@ class ProviderActor() extends Actor {
       // Demande la mesure et la forward vers le terminal concerné
       database ! GetAndForwardMeasure(index - 1, terminal)
 
-
     case ForwardMeasureTo(measure, terminal: Terminal) =>
+      println(s"Forwarding measure to terminal ${terminal.id}")
       val cleanIp = terminal.ip.replaceAll("\"", "")
-      val address = s"akka.tcp://MozartSystem${terminal.id}@${cleanIp}:${terminal.port}/user/Musicien${terminal.id}/player"
+      val address = s"akka.tcp://MozartSystem${terminal.id}@${cleanIp}:${terminal.port}/user/Musicien${terminal.id}"
       val remote = context.actorSelection(address)
       remote ! Play_Music(measure)
-      context.system.scheduler.scheduleOnce(1800.milliseconds, self, StartPlayerAtTerminal(terminal))(context.dispatcher)
 
-
+      // Schedule next measure only if not stopped
+      if (!toBeStopped) {
+        context.system.scheduler.scheduleOnce(computeMeasureDuration(measure), self, StartPlayerAtTerminal(terminal))(context.dispatcher)
+        // Also notify parent when measure completes
+        context.system.scheduler.scheduleOnce(computeMeasureDuration(measure), context.parent, EndMeasure)(context.dispatcher)
+      }
     case _ => println("Message inconnu reçu")
+  }
+
+  def computeMeasureDuration(measure: Measure): FiniteDuration = {
+    // For each chord, get (chord.date + maximum note duration), then choose the maximum
+    val durations = measure.chords.map { chord =>
+      val chordDur = if (chord.notes.nonEmpty) chord.notes.map(_.dur).max else 0
+      chord.date + chordDur
+    }
+    if (durations.isEmpty) 1800.milliseconds else durations.max.milliseconds
   }
 }
 

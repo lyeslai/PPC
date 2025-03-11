@@ -15,16 +15,16 @@ case object Check_end extends MessageMusician
 case object Leader_out extends MessageMusician
 case class Leader_found(id: Int) extends MessageMusician
 case class New_Musician(terminal: Terminal) extends MessageMusician
+case class Musician_dead(id: Int) extends MessageMusician
 
 
-class Musicien (val id:Int, var terminaux:List[Terminal], electionActor: ActorRef) extends Actor
+class Musicien (val id:Int, var terminaux:List[Terminal], electionActor: ActorRef, deadCollector: ActorRef) extends Actor
   with Broadcast {
      // Les differents acteurs du systeme
      val displayActor = context.actorOf(Props[DisplayActor], name = "displayActor")
      val chefOrchestre = context.actorOf(Props(new ChefOrchestre(id, terminaux)), name = "chefOrchestre")
      val playerActor = context.actorOf(Props[PlayerActor], "player")
      val reporterActor = context.actorOf(Props[ReporterActor], name = "reporterActor")
-     val deadCollector = context.actorOf(Props(new DeadCollector(terminaux, electionActor)), "DeadCollector")
 
   var musiciansAlive : Map[Int, Boolean] = Map( this.id -> true)
 
@@ -45,18 +45,17 @@ class Musicien (val id:Int, var terminaux:List[Terminal], electionActor: ActorRe
               displayActor ! Message ("Musicien " + this.id + " is created")
               reporterActor ! Start
 
-              deadCollector ! Start
               // do a leader check right away
-              context.system.scheduler.scheduleOnce(2.seconds, self, Check_leader)(context.dispatcher)
+              context.system.scheduler.scheduleOnce(10.seconds, self, Check_leader)(context.dispatcher)
               context.system.scheduler.scheduleOnce(5.seconds, self, Presence_report)(context.dispatcher)
           }
 
           case Presence_report => {
 //               broadcastPresence(Report_presence(this.id, this.isLeader))
             println("Presence report from " + this.id)
-            deadCollector ! Report_presence(this.id, this.isLeader)
+            broadcastPresence(this.id, this.isLeader)
                if(this.isLeader){
-                    context.system.scheduler.scheduleOnce(5.seconds, self, Check_end)(context.dispatcher)
+                    context.system.scheduler.scheduleOnce(2.seconds, self, Check_end)(context.dispatcher)
                }
           }
 
@@ -68,8 +67,9 @@ class Musicien (val id:Int, var terminaux:List[Terminal], electionActor: ActorRe
               displayActor ! Message(s"Musicien $id est le leader")
               println(s"Musicien $id est le leader")
               // Seul le leader lance son chef d'orchestre avec la liste des musiciens vivants
-              val aliveList: List[Terminal] = terminaux.filter(t => musiciansAlive.getOrElse(t.id, false))
-              chefOrchestre ! StartOnlyLive(aliveList)
+              val aliveList: List[Int] = terminaux.filter(t => musiciansAlive.getOrElse(t.id, false)).map(_.id)
+              chefOrchestre ! reportCurrentAlive(aliveList)
+              chefOrchestre ! CheckMusicians
             } else {
               // Les non-leaders n'initient pas le lancement
               this.isLeader = false
@@ -80,16 +80,14 @@ class Musicien (val id:Int, var terminaux:List[Terminal], electionActor: ActorRe
           // check if leader is still alive
           case Check_leader => {
             println("Checking leader " + this.leader)
-               if(this.leader != -1){
-                 println("asking if leader is alive")
                     deadCollector ! Check_leader
-               }
                context.system.scheduler.scheduleOnce(15.seconds, self, Check_leader)(context.dispatcher)
           }
 
           case Play_Music(measure) => {
               isPlaying = true
               displayActor.tell(Message("Musicien " + this.id + " is playing"), self)
+              println("Musicien playing " + this.id)
               playerActor ! measure
           }
 
@@ -107,6 +105,11 @@ class Musicien (val id:Int, var terminaux:List[Terminal], electionActor: ActorRe
           case New_Musician(terminal) => {
             displayActor ! Message("New musician added")
             musiciansAlive += (terminal.id -> true)
+          }
+
+          case Musician_dead(id) => {
+            displayActor ! Message("Musician " + id + " is dead")
+            musiciansAlive += (id -> false)
           }
 
 

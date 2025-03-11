@@ -13,11 +13,14 @@ trait Broadcast {
 
   def broadcastLeader(leader: Int): Unit = {
     terminaux.foreach { terminal =>
-      val cleanIp = terminal.ip.replaceAll("\"", "")
-      val address = s"akka.tcp://MozartSystem${terminal.id}@${cleanIp}:${terminal.port}/user/Musicien${terminal.id}"
-      val remote = context.actorSelection(address)
-      println(s"Broadcasting leader ($leader) to musician ${terminal.id}")
-      remote ! Report_election_result(leader)
+        val cleanIp = terminal.ip.replaceAll("\"", "")
+        val address = s"akka.tcp://MozartSystem${terminal.id}@${cleanIp}:${terminal.port}/user/Musicien${terminal.id}"
+        val chefOrchestreAddress = s"akka.tcp://MozartSystem${terminal.id}@${cleanIp}:${terminal.port}/user/Musicien${terminal.id}/ChefOrchestre"
+        val remote = context.actorSelection(address)
+        val chefOrchestreRemote = context.actorSelection(chefOrchestreAddress)
+        println(s"Broadcasting leader ($leader) to musician ${terminal.id}")
+        remote ! Report_election_result(leader)
+        chefOrchestreRemote ! Leader_found(leader)
     }
   }
 
@@ -25,13 +28,13 @@ trait Broadcast {
 
   def broadcastPresence(id: Int, isLeader: Boolean): Unit = {
     terminaux.foreach { t =>
-      if (t.id != id) {
+//      if (t.id != id) {
         val cleanIp = t.ip.replaceAll("\"", "")
         // user/Musicien${t.id}/DeadCollector
-        val address = s"akka.tcp://MozartSystem${t.id}@${cleanIp}:${t.port}/user/Musicien${t.id}/DeadCollector"
+        val address = s"akka.tcp://MozartSystem${t.id}@${cleanIp}:${t.port}/user/DeadCollector"
         val remote = context.actorSelection(address)
         remote ! Report_presence(id, isLeader)
-      }
+//      }
     }
   }
 
