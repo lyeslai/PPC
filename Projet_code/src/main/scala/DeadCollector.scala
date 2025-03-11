@@ -9,12 +9,10 @@ abstract class CheckerMessage
 case object CheckerTick extends CheckerMessage
 
 class DeadCollector (val terminaux:List[Terminal], electionActor: ActorRef) extends Actor with Broadcast {
-  val checkInterval: FiniteDuration = 4500.milliseconds // interval for checking
+  val checkInterval: FiniteDuration = 2500.milliseconds // interval for checking
   val deathThreshold: Int = 3 // number of checks before a node is considered failed
 
   var isThereLeader: Boolean = false
-  var deadNodes: List[Terminal] = List()
-  var nodeStatus: Map[Terminal, Int] = terminaux.map(t => t -> 0).toMap
   var musiciansAlive: Map[Int, Date] = Map() // stores nodes and their last active time
   var leader: Int = -1 // ID of the current leader
   // chaque 5 secondes, le musicien vérifie s'il est seul
@@ -25,21 +23,24 @@ class DeadCollector (val terminaux:List[Terminal], electionActor: ActorRef) exte
   override def receive: Receive = {
     case Start => {
       context.system.scheduler.scheduleOnce(checkInterval, self, CheckerTick)(context.dispatcher)
-      if (leader == -1) {
-        electionActor ! Election(terminaux.map(t => t.id))
-      }
     }
+
     case Check_leader => {
-      if (!isThereLeader) {
-        val terminalsIds = terminaux.map(t => t.id)
+      if (leader != -1) {
+        val terminalsIds = terminaux.filter(t => musiciansAlive.contains(t.id)).map(_.id)
         electionActor ! Election(terminalsIds)
       }else{
         println("Leader is already there")
         sender() ! Leader_found(leader)
       }
     }
-    // In DeadCollector.scala - Fix infinite broadcast loop
+
     case Report_presence(id, isLeader) => {
+      if (leader == -1) {
+        // if there is no leader, start an election with all nodes alive
+        electionActor ! Election(terminaux.filter(t => musiciansAlive.contains(t.id)).map(_.id))
+      }
+
       if (isLeader) {
         isThereLeader = true
         leader = id
@@ -48,6 +49,11 @@ class DeadCollector (val terminaux:List[Terminal], electionActor: ActorRef) exte
       // Only update if this is new information or refreshed timestamp
       val lastSeen = musiciansAlive.get(id)
       val now = new Date()
+
+      if (!musiciansAlive.contains(id)) { // New musician
+        println(s"New musician detected: $id")
+        sendNewMusician(id)
+      }
 
       // Update last seen time
       musiciansAlive += (id -> now)
@@ -84,13 +90,19 @@ class DeadCollector (val terminaux:List[Terminal], electionActor: ActorRef) exte
       if (now.getTime - lastAlive.getTime > deathThreshold * checkInterval.toMillis) {
         musiciansAlive -= musicianId
         if (musicianId == leader) {
-          // if the failed node is the leader, trigger a new election
-          println("triggering election")
+          println("Leader non réactif, déclenchement d'une nouvelle élection")
           electionActor ! Election(musiciansAlive.keys.toList)
-
+          // Informer tous les musiciens que le leader est hors service
+          terminaux.foreach { t =>
+            val cleanIp = t.ip.replaceAll("\"", "")
+            val address = s"akka.tcp://MozartSystem${t.id}@${cleanIp}:${t.port}/user/Musicien${t.id}"
+            context.actorSelection(address) ! Leader_out
+          }
         }
       }
-       println(s"Musicians alive: $musiciansAlive")
+
+
+      println(s"Musicians alive: $musiciansAlive")
     }
 
     context.system.scheduler.scheduleOnce(checkInterval, self, CheckerTick)(context.dispatcher)

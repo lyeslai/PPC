@@ -1,6 +1,7 @@
 package upmc.akka.leader
 
 import akka.actor.{Actor, ActorRef, Props}
+import upmc.akka.leader.DataBaseActor.Measure
 
 import scala.concurrent.duration.DurationInt
 import scala.util.Random
@@ -8,11 +9,7 @@ import scala.util.Random
 
 class ProviderActor() extends Actor {
   import DataBaseActor._
-
-
   val database = context.actorOf(Props[DataBaseActor], "database")
-
-
 
   var compteur = 0
   var index = 0
@@ -48,25 +45,24 @@ class ProviderActor() extends Actor {
   def receive: Receive = {
     case StartPlayerAtTerminal(terminal) =>
       println(s"Starting music with musician ${terminal.id}")
-      // Start the measure generation process
       val diceRoll = Random.nextInt(6) + Random.nextInt(6) + 2
       val num = diceRoll - 2
-      val partie = compteur % 16
-      if (partie < 8) {
+      // Choix de la partie en fonction du compteur (par exemple)
+      if (compteur % 16 < 8) {
         index = partie1(num)(compteur % 8)
       } else {
         index = partie2(num)(compteur % 8)
       }
       compteur += 1
-
-      // Get and send the measure to this terminal
+      // Demande la mesure et la forward vers le terminal concerné
       database ! GetAndForwardMeasure(index - 1, terminal)
+
 
     case ForwardMeasureTo(measure, terminal: Terminal) =>
       val cleanIp = terminal.ip.replaceAll("\"", "")
       val address = s"akka.tcp://MozartSystem${terminal.id}@${cleanIp}:${terminal.port}/user/Musicien${terminal.id}/player"
       val remote = context.actorSelection(address)
-      remote ! measure
+      remote ! Play_Music(measure)
       context.system.scheduler.scheduleOnce(1800.milliseconds, self, StartPlayerAtTerminal(terminal))(context.dispatcher)
 
 
