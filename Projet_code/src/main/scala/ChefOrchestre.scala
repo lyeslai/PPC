@@ -47,22 +47,6 @@ class ChefOrchestre(val id: Int, val terminaux: List[Terminal]) extends Actor {
       }
 
 
-//    case CheckMusicians =>
-//      println("Vérification des musiciens...")
-//      this.seconds_elapsed += 5
-//      if(musiciansAlive.size > 1) {
-//        var filtered = musiciansAlive.filter( _ != id ).min
-//        currentMusicianPlaying = filtered
-//        providerActor ! StartPlayerAtTerminal( terminaux(filtered) )
-//        this.seconds_elapsed = 0
-//      } else if (this.seconds_elapsed < 30) {
-//        println("Aucun musicien disponible, réessai dans 5s.")
-//        context.system.scheduler.scheduleOnce(5.seconds, self, CheckMusicians)(context.dispatcher)
-//      } else {
-//        println("Aucun musicien disponible, arrêt du spectacle.")
-//        context.system.terminate()
-//      }
-
     case EndMeasure =>
       println("ChefOrchestre reçu EndMeasure")
       hasLaunched = false

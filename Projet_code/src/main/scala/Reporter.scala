@@ -11,7 +11,6 @@ case object Presence_report
 class ReporterActor() extends Actor {
   val beatInterval: FiniteDuration = 3.second
   val father = context.parent
-  var leader: Boolean = false
 
   def receive: Receive = {
     case Start => schedulePulse()
