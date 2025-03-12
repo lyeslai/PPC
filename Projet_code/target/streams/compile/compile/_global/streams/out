@@ -1,9 +1,16 @@
-[0m[[0m[31merror[0m] [0m[0mC:\Users\freecs\Desktop\M2\PPC\PPC\Projet_code\src\main\scala\ElectionActor.scala:20:24: not enough arguments for method broadcastLeader: (leader: Int, from: Int)Unit.[0m
-[0m[[0m[31merror[0m] [0m[0mUnspecified value parameter from.[0m
-[0m[[0m[31merror[0m] [0m[0m        broadcastLeader(allTerminaux.head)[0m
-[0m[[0m[31merror[0m] [0m[0m                       ^[0m
-[0m[[0m[31merror[0m] [0m[0mC:\Users\freecs\Desktop\M2\PPC\PPC\Projet_code\src\main\scala\ElectionActor.scala:26:24: not enough arguments for method broadcastLeader: (leader: Int, from: Int)Unit.[0m
-[0m[[0m[31merror[0m] [0m[0mUnspecified value parameter from.[0m
-[0m[[0m[31merror[0m] [0m[0m        broadcastLeader(leader)[0m
-[0m[[0m[31merror[0m] [0m[0m                       ^[0m
-[0m[[0m[31merror[0m] [0m[0mtwo errors found[0m
+[0m[[0m[33mwarn[0m] [0m[0mC:\Users\freecs\Desktop\M2\PPC\PPC\Projet_code\src\main\scala\actors\musician-actor.scala:3:16: imported `DisplayActor' is permanently hidden by definition of class DisplayActor in package actors[0m
+[0m[[0m[33mwarn[0m] [0m[0mimport actors.{DisplayActor, Message, PulseActor, RequestScore, SetAsConductor}[0m
+[0m[[0m[33mwarn[0m] [0m[0m               ^[0m
+[0m[[0m[33mwarn[0m] [0m[0mC:\Users\freecs\Desktop\M2\PPC\PPC\Projet_code\src\main\scala\actors\musician-actor.scala:3:30: imported `Message' is permanently hidden by definition of object Message in package actors[0m
+[0m[[0m[33mwarn[0m] [0m[0mimport actors.{DisplayActor, Message, PulseActor, RequestScore, SetAsConductor}[0m
+[0m[[0m[33mwarn[0m] [0m[0m                             ^[0m
+[0m[[0m[33mwarn[0m] [0m[0mC:\Users\freecs\Desktop\M2\PPC\PPC\Projet_code\src\main\scala\actors\musician-actor.scala:3:39: imported `PulseActor' is permanently hidden by definition of class PulseActor in package actors[0m
+[0m[[0m[33mwarn[0m] [0m[0mimport actors.{DisplayActor, Message, PulseActor, RequestScore, SetAsConductor}[0m
+[0m[[0m[33mwarn[0m] [0m[0m                                      ^[0m
+[0m[[0m[33mwarn[0m] [0m[0mC:\Users\freecs\Desktop\M2\PPC\PPC\Projet_code\src\main\scala\actors\musician-actor.scala:3:51: imported `RequestScore' is permanently hidden by definition of object RequestScore in package actors[0m
+[0m[[0m[33mwarn[0m] [0m[0mimport actors.{DisplayActor, Message, PulseActor, RequestScore, SetAsConductor}[0m
+[0m[[0m[33mwarn[0m] [0m[0m                                                  ^[0m
+[0m[[0m[33mwarn[0m] [0m[0mC:\Users\freecs\Desktop\M2\PPC\PPC\Projet_code\src\main\scala\actors\musician-actor.scala:3:65: imported `SetAsConductor' is permanently hidden by definition of object SetAsConductor in package actors[0m
+[0m[[0m[33mwarn[0m] [0m[0mimport actors.{DisplayActor, Message, PulseActor, RequestScore, SetAsConductor}[0m
+[0m[[0m[33mwarn[0m] [0m[0m                                                                ^[0m
+[0m[[0m[33mwarn[0m] [0m[0m5 warnings found[0m

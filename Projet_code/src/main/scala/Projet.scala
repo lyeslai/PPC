@@ -1,47 +1,47 @@
-package upmc.akka.leader
+package mozart
 
-import com.typesafe.config.ConfigFactory
+import actors.MusicianActor
 import akka.actor._
+import com.typesafe.config.ConfigFactory
+import mozart.models._
 
-case class Terminal (id:Int, ip:String, port:Int)
+/**
+ * Main application entry point for the Mozart Distributed Game
+ */
+object MozartApp {
+  def main(args: Array[String]): Unit = {
+    // Validate command line arguments
+    if (args.length != 1) {
+      println("Usage: run <musician_id>")
+      sys.exit(1)
+    }
 
-object Projet {
+    val musicianId = args(0).toInt
 
-   
-     def main (args : Array[String]) {
-          // Gestion des erreurs
-          if (args.size != 1) {
-               println ("Erreur de syntaxe : run <num>")
-               sys.exit(1)
-          }
+    if (musicianId < 0 || musicianId > 3) {
+      println("Error: musician_id must be between 0 and 3")
+      sys.exit(1)
+    }
 
-          val id : Int = args(0).toInt
+    // Build the list of all nodes in the system
+    var nodes = List.empty[Terminal]
 
-          if (id < 0 || id > 3) {
-               println ("Erreur : <num> doit etre compris entre 0 et 3")
-               sys.exit(1)
-          }
+    for (i <- 3 to 0 by -1) {
+      val config = ConfigFactory.load().getConfig(s"system$i")
+      val host = config.getString("akka.remote.netty.tcp.hostname")
+      val port = config.getInt("akka.remote.netty.tcp.port")
+      nodes = Terminal(i, host, port) :: nodes
+    }
 
-          var musicienlist = List[Terminal]()
-          
-          // recuperation des adresses de tous les musiciens
-          // hardcoded path name
-          for(i <- 3 to 0 by -1){
-               val address = ConfigFactory.load().getConfig("system"+ i).getValue("akka.remote.netty.tcp.hostname").render()
-               val port = ConfigFactory.load().getConfig("system"+ i).getValue("akka.remote.netty.tcp.port").render()
-               musicienlist = Terminal(i, address, port.toInt)::musicienlist
-          }
+    println(s"Nodes configuration: $nodes")
 
-          println(musicienlist)
+    // Initialize the Akka system for this musician
+    val system = ActorSystem(s"MozartSystem$musicianId",
+      ConfigFactory.load().getConfig(s"system$musicianId"))
 
-          // Initialisation du node <id>
-          val system = ActorSystem("MozartSystem" + id, ConfigFactory.load().getConfig("system" + id))
-          val electionActor = system.actorOf(Props(new ElectionActor(musicienlist)), "ElectionActor")
-          val deadCollector = system.actorOf(Props(new DeadCollector(musicienlist, electionActor)), "DeadCollector")
-          val musicien = system.actorOf(Props(new Musicien(id, musicienlist, electionActor, deadCollector)), "Musicien"+id)
-          musicien ! Start
-          deadCollector! Start
-          electionActor ! Start
-     }
+    val musician = system.actorOf(Props(new MusicianActor(musicianId, nodes)), s"musician$musicianId")
 
+    // Start the musician
+    musician ! Initialize
+  }
 }
