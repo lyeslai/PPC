@@ -36,15 +36,6 @@ class MusicianActor(val id: Int, val nodes: List[Terminal]) extends Actor {
     } else null
   }
 
-  /**
-   * Roll dice to select a measure
-   * @return A dice roll result (2-12)
-   */
-  private def rollDice(): Int = {
-    val d1 = random.nextInt(6) + 1
-    val d2 = random.nextInt(6) + 1
-    d1 + d2
-  }
 
   def receive: Receive = {
     case Initialize =>
@@ -56,38 +47,38 @@ class MusicianActor(val id: Int, val nodes: List[Terminal]) extends Actor {
       val previousStatus = musicianStatus(targetId)
       musicianStatus(targetId) = status
 
-      status match {
-        case 0 if previousStatus == -1 =>
+      (status,previousStatus) match {
+        case (0, -1) =>
           // Musician came back online
           if (otherMusiciansAlive == 0 && conductorId == id) self ! PerformMusic
           isAlone = false
           otherMusiciansAlive += 1
           if (conductorId != -1) otherMusicians(targetId) ! ConductorInfo(conductorId)
 
-        case -1 if previousStatus == 0 =>
+        case (-1, 0) =>
           // Musician went offline
           otherMusiciansAlive -= 1
 
-        case -1 if previousStatus == 1 =>
+        case (-1, 1) =>
           // Conductor went offline
           otherMusiciansAlive -= 1
           self ! ElectConductor
 
-        case 1 if previousStatus == -1 =>
+        case (1, -1) =>
           // New conductor appeared
           otherMusiciansAlive += 1
           conductorId = targetId
 
-        case -1 if previousStatus == -1 && conductorId == -1 =>
+        case (-1, -1) if conductorId == -1 =>
           // Continuous absence - might need to elect a conductor
           absentMusiciansCount += 1
-          if (absentMusiciansCount == 4) {
-            self ! ElectConductor
-          }
+          if (absentMusiciansCount == 4) self ! ElectConductor
 
         case _ =>
           // Catch-all case for any unhandled status combinations
+          ()
       }
+
     // Handle conductor information
     case ConductorInfo(conductorId) =>
       if (conductorId != this.id && musicianStatus(conductorId) == 0) {
@@ -139,7 +130,9 @@ class MusicianActor(val id: Int, val nodes: List[Terminal]) extends Actor {
           console ! Message(s"Assigning musician $targetMusician to play")
 
           // Get a measure based on dice roll
-          val diceRoll = rollDice()
+          val d1 = random.nextInt(6) + 1
+          val d2 = random.nextInt(6) + 1
+          val diceRoll = d1 + d2
           scoreProvider ! RequestScore(diceRoll)
 
           // Schedule next performance

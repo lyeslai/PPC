@@ -1,6 +1,6 @@
 [0m[[0m[0mdebug[0m] [0m[0m[zinc] IncrementalCompile -----------[0m
 [0m[[0m[0mdebug[0m] [0m[0mIncrementalCompile.incrementalCompile[0m
-[0m[[0m[0mdebug[0m] [0m[0mprevious = Stamps for: 84 products, 10 sources, 3 libraries[0m
-[0m[[0m[0mdebug[0m] [0m[0mcurrent source = Set(${BASE}/src/main/scala/actors/PlayerActor.scala, ${BASE}/src/main/scala/actors/pulse-actor.scala, ${BASE}/src/main/scala/actors/console-actor.scala, ${BASE}/src/main/scala/actors/monitor-actor.scala, ${BASE}/src/main/scala/actors/DataBase.scala, ${BASE}/src/main/scala/Projet.scala, ${BASE}/src/main/scala/actors/musician-actor.scala, ${BASE}/src/main/scala/models/music-data.scala, ${BASE}/src/main/scala/actors/score-provider-actor.scala, ${BASE}/src/main/scala/models/node-model.scala)[0m
+[0m[[0m[0mdebug[0m] [0m[0mprevious = Stamps for: 82 products, 9 sources, 3 libraries[0m
+[0m[[0m[0mdebug[0m] [0m[0mcurrent source = Set(${BASE}/src/main/scala/actors/PlayerActor.scala, ${BASE}/src/main/scala/actors/PulseActor.scala, ${BASE}/src/main/scala/actors/ScoreProviderActor.scala, ${BASE}/src/main/scala/actors/DisplayActor.scala, ${BASE}/src/main/scala/actors/DataBase.scala, ${BASE}/src/main/scala/actors/MonitorActor.scala, ${BASE}/src/main/scala/Projet.scala, ${BASE}/src/main/scala/models/music-data.scala, ${BASE}/src/main/scala/actors/MusicianActor.scala)[0m
 [0m[[0m[0mdebug[0m] [0m[0m> initialChanges = InitialChanges(Changes(added = Set(), removed = Set(), changed = Set(), unmodified = ...),Set(),Set(),API Changes: Set())[0m
 [0m[[0m[0mdebug[0m] [0m[0mNo changes[0m
